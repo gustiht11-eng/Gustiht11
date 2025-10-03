@@ -1,1 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gusti & Tsania - Wedding Invitation</title>
+    <!-- Load SoundCloud Widget API Script (Wajib untuk kontrol volume) -->
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons for elegant icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
+    <script>
+        // Konfigurasi Tailwind CSS untuk Tema Warna dan Font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#0A1128', // Navy Blue
+                        'secondary-gold': '#C39352', // Emas lembut
+                        'background-light': '#F8F8F8',
+                        'gemini-blue': '#3B82F6', // Biru untuk tombol LLM
+                    },
+                    fontFamily: {
+                        'title': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
 
+    <style>
+        /* CSS Kustom Tambahan untuk Efek Visual */
+        body {
+            font-family: 'body', sans-serif;
+            color: #333;
+            scroll-behavior: smooth;
+            background-color: #F8F8F8; /* background-light */
+            overflow-x: hidden;
+        }
+
+        /* Kelas untuk efek reveal/animasi saat scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transition-delay: 0.2s;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Parallax effect for Hero */
+        .parallax-bg {
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Utility untuk Judul Utama */
+        .section-title {
+            font-family: 'title', serif;
+            color: '#0A1128';
+            font-weight: 700;
+        }
+
+        /* Style untuk tombol */
+        .btn-primary {
+            @apply bg-primary-dark text-white border-2 border-primary-dark hover:bg-secondary-gold hover:border-secondary-gold hover:shadow-lg transition-all duration-300 ease-in-out font-bold py-3 px-8 rounded-full shadow-lg;
+        }
+
+        /* Styling Form */
+        input[type="text"], input[type="email"], textarea, select {
+            @apply w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-secondary-gold focus:border-secondary-gold transition-colors duration-200;
+        }
+
+        /* Overlay untuk Hero Image */
+        #cover-overlay {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(1px);
+        }
+
+        /* Kontrol Musik di sudut bawah */
+        #music-control {
+            z-index: 1000;
+            cursor: pointer;
+            @apply fixed bottom-5 right-5 w-12 h-12 bg-primary-dark text-white rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:bg-secondary-gold;
+        }
+
+        /* Custom scrollbar for elegance (optional, can be commented out) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body class="font-body">
+
+    <!-- Kontrol Musik -->
+    <div id="music-control">
+        <!-- Ikon volume-x menandakan musik sedang MUTE saat cover page (default) -->
+        <i data-lucide="volume-x" id="music-icon" class="w-6 h-6"></i>
+    </div>
+
+    <!-- COVER SECTION (Bagian Depan) -->
+    <div id="cover-page" class="fixed inset-0 bg-cover bg-center z-50 transition-opacity duration-1000" style="background-image: url('https://lh3.googleusercontent.com/d/1ig_XDCJiGJBlSMiL7cnOdSARdpYcJA1R');">
+        
+        <!-- SoundCloud Iframe untuk Musik Latar -->
+        <iframe id="bg-music" width="0" height="0" allow="autoplay" style="display:none;" 
+                src="https://w.soundcloud.com/player/?url=https%3A//on.soundcloud.com/PLjCBlvtGxdAFCjFgn&auto_play=true&show_artwork=false&visual=false&show_user=false&show_reposts=false&show_teaser=false&sharing=false&download=false&start_track=0&color=c39352">
+        </iframe>
+
+        <div id="cover-overlay" class="absolute inset-0 flex flex-col items-center justify-center p-8 text-white text-center">
+            <p class="text-lg font-body mb-4 tracking-wider">The Wedding of</p>
+            <h1 class="font-title text-6xl md:text-8xl font-bold mb-6 italic">G & T</h1>
+            <p class="text-xl md:text-2xl font-body mb-8 tracking-wider">Gusti & Tsania</p>
+            <div class="border-t border-b border-white py-2 mb-10 w-48">
+                <p class="text-sm font-light">Minggu, 19 Oktober 2025</p>
+            </div>
+            
+            <button id="open-invitation-btn" class="btn-primary" style="background-color: #C39352; border-color: #C39352;">
+                Buka Undangan
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT (Isi Undangan) -->
+    <main id="main-content" class="min-h-screen pt-0 opacity-0 transition-opacity duration-1000" style="display: none;">
+        
+        <!-- HERO SECTION - Nama Pasangan & Ayat (Parallax) -->
+        <section id="hero" class="h-screen bg-cover bg-center flex items-center justify-center text-white parallax-bg" style="background-image: url('https://lh3.googleusercontent.com/d/1ig_XDCJiGJBlSMiL7cnOdSARdpYcJA1R');">
+            <div class="text-center p-8 bg-primary-dark/50 reveal">
+                <p class="text-base md:text-lg font-light italic mb-4">"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan-pasangan dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya di antaramu rasa kasih dan sayang."</p>
+                <p class="text-sm">- QS. Ar-Rum: 21</p>
+                <h2 class="mt-8 font-title text-5xl md:text-7xl font-bold">Gusti & Tsania</h2>
+                <p class="mt-2 text-xl md:text-2xl">We Are Getting Married</p>
+            </div>
+        </section>
+
+        <!-- INTRO & NAMA PASANGAN -->
+        <section id="couple" class="py-16 md:py-24 bg-background-light text-center reveal">
+            <div class="max-w-4xl mx-auto px-6">
+                <h3 class="section-title text-3xl mb-4">Mempelai</h3>
+                <p class="text-gray-600 mb-10 max-w-xl mx-auto">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami.</p>
+
+                <!-- Pria -->
+                <div class="mb-10 reveal">
+                    <h2 class="font-title text-4xl italic text-primary-dark mb-2">Gusti Hidayatullah</h2>
+                    <!-- DETAIL ORANG TUA PRIA -->
+                    <p class="text-gray-500 text-sm">Putra dari Bapak M maikam & Ibu Septi Laili</p>
+                    <div class="mt-4 text-secondary-gold flex justify-center space-x-4">
+                        <i data-lucide="instagram" class="w-5 h-5"></i>
+                    </div>
+                </div>
+
+                <div class="font-title text-5xl text-secondary-gold my-10 reveal">&</div>
+
+                <!-- Wanita -->
+                <div class="reveal">
+                    <h2 class="font-title text-4xl italic text-primary-dark mb-2">Tsania Nadila</h2>
+                    <!-- DETAIL ORANG TUA WANITA -->
+                    <p class="text-gray-500 text-sm">Putri dari Bapak Asriyadi & Ibu Ratna sari</p>
+                    <div class="mt-4 text-secondary-gold flex justify-center space-x-4">
+                        <i data-lucide="instagram" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COUNTDOWN TIMER -->
+        <section id="countdown-section" class="py-16 bg-primary-dark text-center reveal">
+            <h3 class="text-white text-2xl font-title mb-6">Menghitung Hari Bahagia</h3>
+            <div id="countdown" class="flex justify-center space-x-4 md:space-x-8 text-white">
+                <div class="bg-secondary-gold/20 p-4 rounded-lg reveal">
+                    <div class="font-title text-4xl md:text-5xl" id="days">00</div>
+                    <div class="text-sm mt-1">Hari</div>
+                </div>
+                <div class="bg-secondary-gold/20 p-4 rounded-lg reveal" style="transition-delay: 0.3s;">
+                    <div class="font-title text-4xl md:text-5xl" id="hours">00</div>
+                    <div class="text-sm mt-1">Jam</div>
+                </div>
+                <div class="bg-secondary-gold/20 p-4 rounded-lg reveal" style="transition-delay: 0.4s;">
+                    <div class="font-title text-4xl md:text-5xl" id="minutes">00</div>
+                    <div class="text-sm mt-1">Menit</div>
+                </div>
+                <div class="bg-secondary-gold/20 p-4 rounded-lg reveal" style="transition-delay: 0.5s;">
+                    <div class="font-title text-4xl md:text-5xl" id="seconds">00</div>
+                    <div class="text-sm mt-1">Detik</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACARA (EVENT DETAILS) -->
+        <section id="event" class="py-16 md:py-24 bg-background-light reveal">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <h3 class="section-title text-3xl mb-10">Waktu & Tempat</h3>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Akad Nikah -->
+                    <div class="bg-white p-8 rounded-xl shadow-xl border-t-4 border-secondary-gold reveal">
+                        <i data-lucide="heart-handshake" class="w-8 h-8 text-secondary-gold mx-auto mb-4"></i>
+                        <h4 class="font-title text-2xl text-primary-dark mb-2">Akad Nikah</h4>
+                        <p class="text-gray-500 mb-4 font-bold">Minggu, 19 Oktober 2025</p>
+                        <p class="font-title text-xl text-primary-dark mb-4">Pukul 08.00 WIB</p>
+                        
+                        <!-- ALAMAT TEKS BARU -->
+                        <p class="text-sm text-gray-600 mb-6">Jl. Arwana Timur No.1, Margaasih, Kec. Margaasih, Kabupaten Bandung, Jawa Barat 40215</p>
+                        <a href="https://maps.app.goo.gl/GWbu31oFNyiQhgtw9" target="_blank" class="text-secondary-gold hover:underline font-semibold flex items-center justify-center text-sm">
+                            <i data-lucide="map-pin" class="w-4 h-4 mr-1"></i> Lihat di Google Maps
+                        </a>
+                    </div>
+
+                    <!-- Resepsi -->
+                    <div class="bg-white p-8 rounded-xl shadow-xl border-t-4 border-secondary-gold reveal" style="transition-delay: 0.3s;">
+                        <i data-lucide="cake" class="w-8 h-8 text-secondary-gold mx-auto mb-4"></i>
+                        <h4 class="font-title text-2xl text-primary-dark mb-2">Resepsi</h4>
+                        <p class="text-gray-500 mb-4 font-bold">Minggu, 19 Oktober 2025</p>
+                        <p class="font-title text-xl text-primary-dark mb-4">Pukul 11.00 - 17.00 WIB</p>
+                        
+                        <!-- ALAMAT TEKS BARU -->
+                        <p class="text-sm text-gray-600 mb-6">Jl. Arwana Timur No.1, Margaasih, Kec. Margaasih, Kabupaten Bandung, Jawa Barat 40215</p>
+                        <a href="https://maps.app.goo.gl/GWbu31oFNyiQhgtw9" target="_blank" class="text-secondary-gold hover:underline font-semibold flex items-center justify-center text-sm">
+                            <i data-lucide="map-pin" class="w-4 h-4 mr-1"></i> Lihat di Google Maps
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Google Maps Embed (Peta Lokasi diperbarui ke Jl. Arwana Timur No.1) -->
+                <div class="mt-12 reveal">
+                    <h4 class="font-title text-xl mb-4 text-primary-dark">Peta Lokasi</h4>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.2589258273614!2d107.54929847424613!3d-6.974415893043818!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e8ccf4a460b5%3A0x6b804d16d7a46011!2sJl.%20Arwana%20Timur%20No.1%2C%20Margaasih%2C%20Kec.%20Margaasih%2C%20Kabupaten%20Bandung%2C%20Jawa%20Barat%2040215!5e0!3m2!1s-2!2sid!4v1717621453210!5m2!1sen!2sid" 
+                            width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-xl shadow-lg"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- OUR STORY -->
+        <section id="story" class="py-16 md:py-24 bg-primary-dark text-white reveal">
+            <div class="max-w-3xl mx-auto px-6 text-center">
+                <h3 class="section-title text-3xl mb-10 text-secondary-gold">Our Story</h3>
+                <h4 class="font-title text-4xl mb-8">Cinta Kelas Satu Hingga Janji Suci</h4>
+                <p class="text-lg leading-relaxed mb-6 reveal">
+                    Semua dimulai pada tahun 2017, di bangku kelas satu SMA. Hubungan kita penuh drama; kita sering sekali putus nyambung, melewati fase ego remaja hingga ujian jarak. Setiap perpisahan selalu membawa kita kembali, membuktikan bahwa kita memang ditakdirkan bersama.
+                </p>
+                <p class="text-lg leading-relaxed mb-6 reveal" style="transition-delay: 0.3s;">
+                    Setelah sembilan tahun, dengan segala pertengkaran dan rujuknya, kita akhirnya sampai di hari yang kita tunggu.
+                </p>
+                <p class="font-title text-5xl my-8 text-secondary-gold reveal" style="transition-delay: 0.5s;">
+                    19 Oktober 2025.
+                </p>
+                <p class="text-lg leading-relaxed reveal" style="transition-delay: 0.7s;">
+                    Dengan hati yang penuh syukur, aku resmi mengucapkan janji suci bersamamu. Perjalanan panjang ini, dengan segala badainya, terbayar lunas. Alhamdulillah, kita berhasil. Kita tidak hanya bertahan, tapi kita menang.
+                </p>
+            </div>
+        </section>
+
+        <!-- WEDDING GIFT / AMPLOP DIGITAL -->
+        <section id="gift" class="py-16 md:py-24 bg-background-light text-center reveal">
+            <div class="max-w-2xl mx-auto px-6">
+                <h3 class="section-title text-3xl mb-10">Hadiah Pernikahan</h3>
+                <p class="text-gray-600 mb-8">Doa restu Anda merupakan karunia yang paling berharga. Namun, jika Anda ingin memberikan hadiah, Anda dapat menggunakan opsi Amplop Digital di bawah ini:</p>
+
+                <div class="bg-white p-6 md:p-10 rounded-xl shadow-xl border-l-4 border-secondary-gold mx-auto max-w-sm reveal">
+                    <i data-lucide="wallet" class="w-8 h-8 text-secondary-gold mx-auto mb-4"></i>
+                    <h4 class="font-title text-xl text-primary-dark mb-4">Dana (DANA / E-Wallet)</h4>
+                    <p class="text-gray-700 mb-1">Nomor Akun:</p>
+                    <p class="font-bold text-2xl text-primary-dark mb-4">082251225042</p>
+                    <p class="text-gray-700 mb-4">a/n Tsania Nadila</p>
+                    
+                    <button id="copy-dana" class="bg-secondary-gold text-white font-semibold py-2 px-4 rounded-full text-sm hover:bg-secondary-gold/80 transition duration-300">
+                        <span id="copy-text">Salin Nomor</span>
+                    </button>
+                    <div id="copy-message" class="mt-3 text-sm text-green-600 opacity-0 transition-opacity duration-300">Berhasil disalin!</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP (Form Konfirmasi Kehadiran) & UCAPAN -->
+        <section id="rsvp" class="py-16 md:py-24 bg-primary-dark text-white reveal">
+            <div class="max-w-4xl mx-auto px-6">
+                <h3 class="section-title text-3xl mb-10 text-secondary-gold text-center">Konfirmasi Kehadiran & Ucapan</h3>
+
+                <div class="grid md:grid-cols-2 gap-10">
+                    
+                    <!-- RSVP Form -->
+                    <div class="bg-white p-8 rounded-xl shadow-2xl text-primary-dark reveal">
+                        <h4 class="font-title text-2xl mb-4">RSVP</h4>
+                        <p class="text-gray-600 mb-6 text-sm">Mohon konfirmasi kehadiran Anda untuk membantu kami dalam pengaturan acara.</p>
+                        
+                        <form id="rsvp-form">
+                            <input type="text" id="rsvp-name" placeholder="Nama Anda" required>
+                            
+                            <select id="rsvp-attendance" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-secondary-gold focus:border-secondary-gold transition-colors duration-200 bg-white" required>
+                                <option value="" disabled selected>Apakah Anda akan hadir?</option>
+                                <option value="Hadir">Ya, Saya Akan Hadir</option>
+                                <option value="Tidak Hadir">Mohon Maaf, Tidak Bisa Hadir</option>
+                            </select>
+
+                            <input type="number" id="rsvp-guests" placeholder="Jumlah tamu (Termasuk Anda)" required min="1">
+                            
+                            <button type="submit" id="submit-rsvp-btn" class="btn-primary w-full mt-4 bg-secondary-gold border-secondary-gold">
+                                Kirim Konfirmasi
+                            </button>
+                            <div id="rsvp-message" class="mt-4 text-center text-sm font-semibold text-primary-dark"></div>
+                        </form>
+                    </div>
+
+                    <!-- Ucapan & Pesan (DENGAN FITUR GEMINI API & FIRESTORE) -->
+                    <div class="bg-primary-dark/80 p-8 rounded-xl shadow-2xl reveal" style="transition-delay: 0.3s;">
+                        <h4 class="font-title text-2xl mb-4 text-secondary-gold">Buku Tamu Digital</h4>
+                        <p class="text-gray-300 mb-6 text-sm">Silakan tinggalkan doa dan harapan terbaik Anda di bawah ini.</p>
+                        <!-- ID Pengguna untuk Debugging -->
+                        <div id="user-id-display" class="text-xs text-gray-500 mb-3 break-all hidden">User ID: Loading...</div>
+
+                        <form id="guestbook-form">
+                            <!-- Gemini API Feature UI: Wish Generator -->
+                            <div class="mb-4 p-4 bg-primary-dark/50 rounded-lg border border-secondary-gold/50">
+                                <label for="guest-relationship" class="block text-sm font-semibold mb-2 text-gray-300">
+                                    Kesulitan menulis ucapan? **Gunakan Bantuan AI!**
+                                </label>
+                                <select id="guest-relationship" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-secondary-gold focus:border-secondary-gold transition-colors duration-200 bg-white text-primary-dark">
+                                    <option value="umum" selected>Umum (Doa Formal)</option>
+                                    <option value="sahabat">Sahabat/Teman Dekat</option>
+                                    <option value="keluarga">Keluarga/Kerabat</option>
+                                    <option value="rekan kerja">
